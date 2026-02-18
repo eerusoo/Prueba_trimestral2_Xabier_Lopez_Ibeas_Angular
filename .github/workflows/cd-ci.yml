@@ -25,12 +25,17 @@ jobs:
       - name: Build Angular(production)
         run: npm run build -- --configuration production
 
+      - name: Prepare SSH key
+        run: mkdir -p ~/.ssh
+             printf "%s" "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_vm
+             chmod 600 ~/.ssh/id_vm
+
       - name: Deploy to VM via SSH
         uses: appleboy/scp-action@master
         with:
-          host: ${{secrets.VM_HOST}}
-          username: ${{secrets.VM_USER}}
-          key: ${{secrets.VM_SSH_KEY}}
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key_path: ~/.ssh/id_vm
           source: "dist/**"
           target: "/var/www/html/prueba_trimestral2"
           strip_components: 2
